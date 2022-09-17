@@ -1,0 +1,68 @@
+.team {
+    padding-left: 20px;
+    border-left: 1px solid;
+    padding-bottom: 7px;
+    padding-right: 11px;
+    box-shadow: 1px 0 0 0 #888;
+}
+
+.name {
+    padding: 3px 5px;
+    box-shadow: 1px 0 0 0 #888, 0 1px 0 0 #888, 1px 0 0 0 #888 inset, 0 1px 0 0 #888 inset;
+    background-color: white;
+}
+
+.manager:hover {
+    color: #1976d2;
+}
+
+.manager {
+    background-color: #d3e9ff;
+    padding-left: 5px;
+    cursor: pointer;
+}
+
+.wrapper {
+    cursor: default;
+    user-select: none;
+    position: relative;
+    box-shadow: 0px 1px 1px;
+}
+
+.buttons {
+    position: absolute;
+    right: 10px;
+    top: 4px;
+}
+
+.icon {
+    width: 20px;
+    cursor: pointer;
+    position: relative;
+}
+
+.open {
+    background-color: #e9ffea;
+}
+
+.details {
+    position: fixed;
+    height: 90px;
+    background-color: #fffabd;
+    border: 1px dashed;
+    padding: 3px;
+    z-index: 1;
+}
+
+.details-name {
+    font-weight: 500;
+    color: #5353cc;
+}
+
+.progress {
+    width: 200px;
+    display: inline-block;
+    position: absolute;
+    right: 50px;
+    top: 12px;
+}

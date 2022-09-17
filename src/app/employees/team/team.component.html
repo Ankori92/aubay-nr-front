@@ -1,0 +1,18 @@
+<div class="wrapper">
+    <div #details class="details" *ngIf="isDetailsVisible">
+        <div class="details-name">{{ employee.firstname }} {{ employee.lastname }}</div>
+        <div class="details-salary"><strong>Salaire :</strong> {{ employee.salary | currency }}</div>
+        <div class="details-others"><strong>Date d'entrée :</strong> {{ employee.entryDate | date}}<br /><strong>Pays :</strong> {{ employee.country.labelFr }}</div>
+    </div>
+    <div [ngClass]="{'name': true, 'manager': isManager(), 'open': isOpen}" (mouseover) ="isDetailsVisible=true"  (mouseleave) ="isDetailsVisible=false" (click)="toggleOpen()">
+        {{ employee.firstname }} {{ employee.lastname }} <span *ngIf="nbEmployeesBelow(employee) > 1">(Manager de {{nbEmployeesBelow(employee)-1}} employé{{nbEmployeesBelow(employee)>2?'s':''}})</span>
+        <img src="assets/edit.png" (click)="edit($event)" style="top: 5px;left: 6px;" class='icon' (mouseover) ="isDetailsVisible=true"  (mouseleave) ="isDetailsVisible=false" />
+        <mat-progress-bar mode="determinate" [value]="progressSalary()" class="progress" [style]="'right:'+(100-deep*11)+'px'"></mat-progress-bar>
+    </div>
+    <div class='buttons'>
+        <img [src]="arrowUrl()" class='icon' *ngIf="isManager()" (mouseover) ="isDetailsVisible=true"  (mouseleave) ="isDetailsVisible=false" (click)="toggleOpen()" />
+    </div>
+    <div class='team' *ngIf="isOpen" [ngClass]="{'open': isOpen}">
+        <app-team *ngFor="let e of employee.employees" [employee]="e" [deep]="deep+1" [countries]="countries"></app-team>
+    </div>
+</div>

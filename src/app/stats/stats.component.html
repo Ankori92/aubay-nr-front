@@ -1,0 +1,51 @@
+
+
+<mat-card>
+    <mat-card-title>Statistiques <img src="assets/refresh.png" class="refresh" (click)="refreshData()" /></mat-card-title>
+    <mat-card-content class="wrapper">
+        <table mat-table [dataSource]="statistics" style="width:800px">
+            <ng-container matColumnDef="uri">
+              <th mat-header-cell *matHeaderCellDef> URI </th>
+              <td mat-cell *matCellDef="let element"> {{element.uri}} </td>
+            </ng-container>
+            <ng-container matColumnDef="queries">
+              <th mat-header-cell *matHeaderCellDef> Requêtes SQL par appel API </th>
+              <td mat-cell *matCellDef="let element" [innerHTML]="element.queries | count"> </td>
+            </ng-container>
+            <ng-container matColumnDef="duration">
+              <th mat-header-cell *matHeaderCellDef> Durée moyenne appel API </th>
+              <td mat-cell *matCellDef="let element" [innerHTML]="element.duration | duration"> </td>
+            </ng-container>
+            <ng-container matColumnDef="weight">
+              <th mat-header-cell *matHeaderCellDef> Poids moyen de la réponse </th>
+              <td mat-cell *matCellDef="let element" [innerHTML]="element.weight | weight"> </td>
+            </ng-container>
+            <ng-container matColumnDef="api">
+              <th mat-header-cell *matHeaderCellDef> Nombre d'appel API </th>
+              <td mat-cell *matCellDef="let element"> {{element.elements|number:'1.0-0'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="checked">
+              <th mat-header-cell *matHeaderCellDef> <mat-checkbox [checked]="selectedUris.length == statistics.length" (change)="checkAllData($event)"></mat-checkbox></th>
+              <td mat-cell *matCellDef="let element"> <mat-checkbox [checked]="element.checked" (change)="chartData(element.uri,$event)"></mat-checkbox></td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <img src="assets/loading.gif" *ngIf="loading" class="loader" />
+          <div class="wrapper_chart">
+            <app-stats-chart [usages]="usages" [selectedUris]="selectedUris" [selectedDataType]="selectedDataType" *ngIf="usages.length > 0"></app-stats-chart>
+            <div class="wrapper_chart_form">
+              <mat-form-field appearance="fill">
+                <mat-label>Type de données</mat-label>
+                <br />
+                <mat-select [(value)]="selectedDataType">
+                  <mat-option value="duration">Durée d'exécution</mat-option>
+                  <mat-option value="queries">Nombre de requêtes SQL</mat-option>
+                  <mat-option value="weight">Poids des réponses</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button mat-raised-button (click)="resetStats()" color="warn">Réinitialiser les statistiques</button>
+            </div>
+          </div>
+    </mat-card-content>
+</mat-card>

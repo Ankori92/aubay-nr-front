@@ -1,0 +1,29 @@
+.logo {
+    width:50px;
+    float: left;
+}
+
+.title {
+    width: 133px;
+    margin-left: 65px;
+    margin-top: 10px;
+    user-select: none;
+}
+
+.userinfos {
+    float: right;
+    background-color:white;
+    padding: 3px 11px;
+    border-radius: 3px;
+}
+
+.menu ::ng-deep .mat-button-wrapper {
+    color: white;
+    font-size: 17px;
+}
+
+.menu ::ng-deep button:hover {
+    background-color: #5997d4;
+    opacity: 1;
+    font-weight: 500;
+}

@@ -1,0 +1,24 @@
+<mat-card class="center">
+    <img src="assets/aubay.svg" class="logo" />
+    <mat-card-title>Authentification</mat-card-title>
+    <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="submitLoginForm()" method="post">
+            <p>
+                <mat-form-field>
+                    <input type="text" matInput placeholder="Identifiant" formControlName="username" required>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field>
+                    <input type="password" matInput placeholder="Mot de passe" formControlName="password" required>
+                </mat-form-field>
+            </p>
+            <p *ngIf="error" class="error">
+                {{ error }}
+            </p>
+            <div class="button">
+                <button type="submit" mat-button>Se connecter</button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

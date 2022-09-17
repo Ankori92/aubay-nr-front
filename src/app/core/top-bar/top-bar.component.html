@@ -1,0 +1,15 @@
+<div>
+  <img src="assets/aubay.svg" class="logo" />
+  <h1 class="title">AUBAY - NR</h1>
+</div>
+<div *ngIf="user?.username" class="menu">
+  <button mat-button [routerLink]="['/employees']" color="primary">Ressources Humaines</button>
+  <button mat-icon-button [routerLink]="['/application']" color="primary"><mat-icon>settings</mat-icon></button>
+</div>
+<div class="userinfos" *ngIf="user?.username">
+  Bonjour {{ user?.employee?.firstname }} {{ user?.employee?.lastname }}<br /> 
+  <a href="#" (click)="logout()">Se déconnecter</a>
+</div>
+<div class="userinfos" *ngIf="!user?.username">
+  <a (click)="init()">Initialiser la base de données</a>
+</div>
