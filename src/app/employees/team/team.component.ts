@@ -20,15 +20,18 @@ export class TeamComponent {
   isOpen: boolean = false;
   isDetailsVisible: boolean = false;
 
-  constructor(private renderer: Renderer2, public dialog: MatDialog) { }
-
-  public isManager(): boolean {
-    return this.employee.employees != null && this.employee.employees.length > 0;
-  }
+  constructor(private renderer: Renderer2, private dialog: MatDialog, private api: ApiService) { }
 
   public toggleOpen(): void {
-    if(this.isManager()) {
-      this.isOpen = !this.isOpen;
+    if(this.employee.teamSize > 0) {
+      if(this.employee.employees.length > 0) {
+        this.isOpen = !this.isOpen;
+      } else {
+        this.api.get<Employee>("employees/" + this.employee.id + "?onlyDirectTeam=true&filterResigned=true").subscribe(employee => {
+          this.employee = employee;
+          this.isOpen = true;
+        });
+      }
     }
   }
 
@@ -42,14 +45,6 @@ export class TeamComponent {
       return temp * 100 / 40000;
     }
     return 0;
-  }
-
-  public nbEmployeesBelow(employee: Employee): number {
-    var count = 1;
-    if(employee.employees) {
-      employee.employees.forEach(emp => count += this.nbEmployeesBelow(emp));
-    }
-    return count;
   }
 
   public edit($event: MouseEvent): void {

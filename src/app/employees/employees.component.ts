@@ -16,7 +16,7 @@ export class EmployeesComponent implements OnInit {
   constructor(private api: ApiService) { }
 
   ngOnInit(): void {
-    this.api.get<Employee[]>("employees/top?filterResigned=true").subscribe(employees => this.employees = employees);
+    this.api.get<Employee[]>("employees/top").subscribe(employees => this.employees = employees);
     this.api.get<Country[]>("countries").subscribe(countries => this.countries = countries);
   }
 
@@ -29,7 +29,7 @@ export class EmployeesComponent implements OnInit {
   public nbEmployees(employee: Employee): number {
     var count = 1; // Manager
     if(employee.employees) {
-      employee.employees.forEach(emp => count += this.nbEmployees(emp)); // Employees
+      count += employee.teamSize; // Employees
     }
     return count;
   }
