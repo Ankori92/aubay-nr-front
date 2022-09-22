@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from "chart.js";
-import { Usage } from 'src/app/models/usage';
+import { Statistic } from 'src/app/models/stats';
 
 @Component({
   selector: 'app-stats-chart',
@@ -10,7 +10,7 @@ import { Usage } from 'src/app/models/usage';
 })
 export class StatsChartComponent implements OnChanges {
 
-  @Input() usages!: Usage[];
+  @Input() statistics!: [string, Statistic[]][];
   @Input() selectedUris!: string[];
   @Input() selectedDataType!: 'duration' | 'queries' | 'weight';
   @ViewChild(BaseChartDirective) chart!: BaseChartDirective;
@@ -24,18 +24,25 @@ export class StatsChartComponent implements OnChanges {
   ngOnChanges(): void {
     var labels: string[] = [];
     var data: number[] = [];
-    var timestamps: Date[] = this.splitAnalyzedPeriod(this.valuesInChart, this.usages);
-    var begin = timestamps[0];
-    for(var i = 0 ; i < timestamps.length + 1 ; i++) {
-      var end = i < timestamps.length ? timestamps[i] : new Date();
-      labels.push(this.formatFrDate(end));
-      data.push(this.aggregateDataBetween(begin, end));
-      begin = end; // next !
-    }
+    this.statistics.forEach(stat => {
+      var date: any = stat[0];
+      var total = 0;
+      var nb = 0;
+      labels.push(this.formatFrDate(new Date(date*1)));
+      for(let s of stat[1]) {
+        if(this.selectedUris.indexOf(s.uri) == -1) {
+          continue;
+        }
+        total += this.selectedDataType == 'duration' ? s.duration : this.selectedDataType == 'queries' ? s.queries : Math.round(s.weight / 1000);
+        nb++;
+      }
+      data.push(total/nb);
+    });
     this.refreshChart(labels, data);
   }
 
   private formatFrDate(d: Date): string {
+    d = new Date(d);
     const date = (d.getDate() < 10 ? "0" : "") + d.getDate();
     const month = (d.getMonth() < 9 ? "0" : "") + (d.getMonth() + 1);
     const year = d.getFullYear();
@@ -64,42 +71,5 @@ export class StatsChartComponent implements OnChanges {
       case 'weight':
         return 'Poids des réponses (en Ko)';
     }
-  }
-
-  private aggregateDataBetween(begin: Date, end: Date): number {
-    var total = 0;
-    var countUsages = 0;
-    this.usages.forEach(usage => {
-      var date = new Date(usage.date);
-      var isSelected = this.selectedUris.indexOf(usage.uri) != -1;
-      if(isSelected && date >= begin && date < end) {
-        total += usage[this.selectedDataType];
-        countUsages++;
-      }
-    });
-    if(this.selectedDataType == 'weight') {
-      total = Math.round(total / 1000); // o -> Ko conversion
-    }
-    return countUsages == 0 ? 0 : total / countUsages;
-  }
-
-  private splitAnalyzedPeriod(nbSteps: number, data: Usage[]): Date[] {
-    var olderUsageDate = this.findOlderUsageDate(data);
-    var olderTimestamp = olderUsageDate.getTime();
-    var stepDuration = (new Date().getTime() - olderTimestamp) / nbSteps;
-    var result: Date[] = [];
-    for(var i = 0 ; i < nbSteps ; i++) {
-      result.push(new Date(olderTimestamp + i * stepDuration));
-    }
-    return result;
-  }
-
-  private findOlderUsageDate(usages: Usage[]) {
-    var older = new Date();
-    usages.forEach(usage => {
-      var date = new Date(usage.date);
-      older = date < older ? date : older;
-    });
-    return older;
   }
 }

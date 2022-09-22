@@ -3,8 +3,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ApiService } from 'src/app/core/services/api.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
-import { Statistic } from 'src/app/models/stats';
-import { Usage } from 'src/app/models/usage';
+import { Statistic, StatisticsWrapper } from 'src/app/models/stats';
 
 @Component({
   selector: 'app-stats',
@@ -17,8 +16,8 @@ export class StatsComponent implements OnInit {
   selectedUris: string[] = [];
   selectedDataType: 'duration' | 'queries' = 'duration';
   loading: boolean = true;
-  statistics: Statistic[] = [];
-  usages: Usage[] = [];
+  statisticsByPeriods: [string, Statistic[]][] = [];
+  statisticsGlobal: Statistic[] = [];
 
   constructor(private api: ApiService, private dialog: MatDialog) { }
 
@@ -27,48 +26,17 @@ export class StatsComponent implements OnInit {
   }
 
   public refreshData(): void {
-    this.usages = [];
-    this.statistics = [];
+    this.statisticsByPeriods = []
     this.loading = true;
-    this.selectedUris = [];
-    this.api.get<Usage[]>("stats").subscribe(usages => this.buildStats(usages));
-  }
-  
-  private buildStats(usages: Usage[]): void {
-    var map: { [uri: string]: Statistic } = {};
-    // Sum usages by URI
-    usages.forEach(usage => {
-      this.selectUri(usage.uri);
-      var total = map[usage.uri];
-      if(!total) {
-        total = { uri: usage.uri, queries: 0, duration: 0, weight: 0, elements: 0, checked: usage.checked };
-        map[usage.uri] = total;
+    this.api.get<StatisticsWrapper>("stats").subscribe(stats => {
+      this.statisticsByPeriods = Object.entries(stats.byPeriod).sort((a, b) => a[0].localeCompare(b[0]));
+      this.statisticsGlobal = stats.global;
+      this.loading = false;
+      for(let stat of this.statisticsGlobal) {
+        stat.checked = true;
+        this.selectUri(stat.uri);
       }
-      total.queries += usage['queries'];
-      total.duration += usage['duration'];
-      total.weight += usage['weight'];
-      total.elements++;
     });
-    // Compute average queries / durations
-    var statistics: Statistic[] = [];
-    for (const property in map) {
-      var queries  = map[property].queries;
-      var elements = map[property].elements;
-      var duration = map[property].duration;
-      var weight = map[property].weight;
-      statistics.push({
-        uri: property,
-        elements: elements,
-        queries: queries / elements,
-        duration: duration / elements,
-        weight: weight / elements,
-        checked: true
-      });
-    }
-    // Save results
-    this.usages = usages;
-    this.statistics = statistics;
-    this.loading = false;
   }
 
   public chartData(uri: string, $event: MatCheckboxChange) {
@@ -78,24 +46,24 @@ export class StatsComponent implements OnInit {
     } else {
       this.unselectUri(uri);
     }
-    this.statistics.forEach(stat => {
+    this.statisticsGlobal.forEach(stat => {
       if(stat.uri == uri) {
         stat.checked = $event.checked;
       }
     });
   }
 
-
   public resetStats(): void {
     this.dialog.open(ResetStatisticsConfirmation, { width: '350px', data: { selectedUris: this.selectedUris } }).afterClosed().subscribe(result => {
       if(result === "" || result === true) {
-        this.refreshData();
+        this.statisticsByPeriods = [];
+        this.statisticsGlobal = [];
       }
     });
   }
   
   public checkAllData($event: MatCheckboxChange): void {
-    this.statistics.forEach(stat => this.chartData(stat.uri, $event));
+    this.statisticsGlobal.forEach(stat => this.chartData(stat.uri, $event));
   }
 
   private selectUri(uri: string) {
