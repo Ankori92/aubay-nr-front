@@ -16,8 +16,38 @@ export class EmployeesComponent implements OnInit {
   constructor(private api: ApiService) { }
 
   ngOnInit(): void {
-    this.api.get<Employee[]>("employees/top").subscribe(employees => this.employees = employees);
-    this.api.get<Country[]>("countries").subscribe(countries => this.countries = countries);
+    this.refreshData();
+  }
+
+  public refreshData(forceReload: boolean = false): void {
+    this.reloadEmployees(forceReload);
+    this.reloadCountries(forceReload);
+  }
+
+  private reloadEmployees(forceReload: boolean): void {
+    var employees = localStorage.getItem("EmployeesComponent.employees");
+    if(employees && !forceReload) {
+      this.employees = JSON.parse(employees);
+    } else {
+      this.employees = [];
+      this.api.get<Employee[]>("employees/top").subscribe(employees => {
+        this.employees = employees;
+        localStorage.setItem("EmployeesComponent.employees", JSON.stringify(this.employees));
+      });
+    }
+  }
+
+  private reloadCountries(forceReload: boolean): void {
+    var countries = localStorage.getItem("EmployeesComponent.countries");
+    if(countries && !forceReload) {
+      this.countries = JSON.parse(countries);
+    } else {
+      this.countries = [];
+      this.api.get<Country[]>("countries").subscribe(countries => {
+        this.countries = countries;
+        localStorage.setItem("EmployeesComponent.countries", JSON.stringify(this.countries));
+      });
+    }
   }
 
   public nbEmployeesTotal(): number {

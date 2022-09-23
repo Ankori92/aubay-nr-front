@@ -1,6 +1,6 @@
 
 <mat-card>
-    <mat-card-title>Ressources Humaines</mat-card-title>
+    <mat-card-title>Ressources Humaines <img src="assets/refresh.png" class="refresh" (click)="refreshData(true)" /></mat-card-title>
     <mat-card-subtitle>{{nbEmployeesTotal()}} employés</mat-card-subtitle>
     <mat-card-content>
         <app-team *ngFor="let e of employees" [employee]="e" [deep]="0" [countries]="countries"></app-team>
