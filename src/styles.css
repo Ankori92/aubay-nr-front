@@ -18,6 +18,15 @@ body {
   padding-top: 30px;
 }
 
+.refresh {
+    cursor: pointer;
+    width: 25px;
+    position: relative;
+    top: 5px;
+    right: 25px;
+    float: right;
+}
+
 router-outlet + *  {
   padding: 0 16px;
 }

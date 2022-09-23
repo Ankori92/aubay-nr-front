@@ -15,14 +15,25 @@ export class StatsComponent implements OnInit {
   displayedColumns: string[] = ['uri', 'queries', 'duration', 'weight', 'api', 'checked'];
   selectedUris: string[] = [];
   selectedDataType: 'duration' | 'queries' = 'duration';
-  loading: boolean = true;
+  loading: boolean = false;
   statisticsByPeriods: [string, Statistic[]][] = [];
   statisticsGlobal: Statistic[] = [];
 
   constructor(private api: ApiService, private dialog: MatDialog, private notif: NotificationService) { }
 
   ngOnInit(): void {
-    this.refreshData();
+    var statisticsGlobal = localStorage.getItem("StatsComponent.statisticsGlobal");
+    var statisticsByPeriods = localStorage.getItem("StatsComponent.statisticsByPeriods");
+    if(statisticsGlobal && statisticsByPeriods) {
+      this.statisticsGlobal = JSON.parse(statisticsGlobal);
+      this.statisticsByPeriods = JSON.parse(statisticsByPeriods);
+      for(let stat of this.statisticsGlobal) {
+        stat.checked = true;
+        this.selectUri(stat.uri);
+      }
+    } else {
+      this.refreshData();
+    }
   }
 
   public refreshData(): void {
@@ -31,6 +42,8 @@ export class StatsComponent implements OnInit {
     this.api.get<StatisticsWrapper>("stats").subscribe(stats => {
       this.statisticsByPeriods = Object.entries(stats.byPeriod).sort((a, b) => a[0].localeCompare(b[0]));
       this.statisticsGlobal = stats.global;
+      localStorage.setItem("StatsComponent.statisticsGlobal", JSON.stringify(this.statisticsGlobal));
+      localStorage.setItem("StatsComponent.statisticsByPeriods", JSON.stringify(this.statisticsByPeriods));
       this.loading = false;
       for(let stat of this.statisticsGlobal) {
         stat.checked = true;
