@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ApiService } from 'src/app/core/services/api.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { Statistic } from 'src/app/models/stats';
@@ -20,7 +20,7 @@ export class StatsComponent implements OnInit {
   statistics: Statistic[] = [];
   usages: Usage[] = [];
 
-  constructor(private api: ApiService, private dialog: MatDialog, private notif: NotificationService) { }
+  constructor(private api: ApiService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.refreshData();
@@ -30,6 +30,7 @@ export class StatsComponent implements OnInit {
     this.usages = [];
     this.statistics = [];
     this.loading = true;
+    this.selectedUris = [];
     this.api.get<Usage[]>("stats").subscribe(usages => this.buildStats(usages));
   }
   
@@ -86,19 +87,15 @@ export class StatsComponent implements OnInit {
 
 
   public resetStats(): void {
-    this.dialog.open(ResetStatisticsConfirmation, { width: '350px' }).afterClosed().subscribe(result => {
+    this.dialog.open(ResetStatisticsConfirmation, { width: '350px', data: { selectedUris: this.selectedUris } }).afterClosed().subscribe(result => {
       if(result) {
-        this.buildStats([]);
+        this.refreshData();
       }
     });
   }
   
   public checkAllData($event: MatCheckboxChange): void {
     this.statistics.forEach(stat => this.chartData(stat.uri, $event));
-  }
-
-  public initData(): void {
-    this.api.post("init").subscribe(success => this.notif.show("D'autres données ont été générées et ajoutées en base de données"));
   }
 
   private selectUri(uri: string) {
@@ -125,10 +122,10 @@ export class StatsComponent implements OnInit {
               </div>',
 })
 export class ResetStatisticsConfirmation {
-  constructor(private dialogRef: MatDialogRef<ResetStatisticsConfirmation>, private api: ApiService) {}
+  constructor(private dialogRef: MatDialogRef<ResetStatisticsConfirmation>, private api: ApiService, @Inject(MAT_DIALOG_DATA) public data: { selectedUris: string[] }) {}
 
   public resetData(): void {
-    this.api.delete("stats").subscribe(success => this.close(true));
+    this.api.delete("stats", this.data.selectedUris).subscribe(success => this.close(true));
   }
 
   public close(reset: boolean): void {

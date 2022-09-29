@@ -40,8 +40,8 @@ export class ApiService {
    * Delete request to API
    * @param url 
    */
-  public delete<T>(url: string, conf: any = this.defaultConfig): Observable<T> {
-    return this.doRequest(url, HttpMethod.DELETE, null, conf);
+  public delete<T>(url: string, body: any = null, conf: any = this.defaultConfig): Observable<T> {
+    return this.doRequest(url, HttpMethod.DELETE, body, conf);
   }
 
   /**
@@ -70,7 +70,7 @@ export class ApiService {
    */
   private doRequest<T>(url: String, method: HttpMethod = HttpMethod.GET, body: any = null, conf: any = this.defaultConfig): Observable<T> {
     const config = this.mergeWithDefaultConfig(conf);
-    const httpConf = { withCredentials: config.withCredentials };
+    const httpConf = { withCredentials: config.withCredentials, body: body };
     return new Observable<T>((observer) => {
       if(method == HttpMethod.GET) {
         this.http.get<T>(this.apiUrl + url, httpConf).subscribe(this.requestObserver(observer, config));
