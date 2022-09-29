@@ -19,8 +19,4 @@ export class TopBarComponent {
   public logout(): void {
     this.auth.logout();
   }
-
-  public init(): void {
-    this.api.post("init").subscribe(success => this.notif.show("Initialisation de la base de données terminée"));
-  }
 }

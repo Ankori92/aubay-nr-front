@@ -10,6 +10,3 @@
   Bonjour {{ user?.employee?.firstname }} {{ user?.employee?.lastname }}<br /> 
   <a href="#" (click)="logout()">Se déconnecter</a>
 </div>
-<div class="userinfos" *ngIf="!user?.username">
-  <a (click)="init()">Initialiser la base de données</a>
-</div>
