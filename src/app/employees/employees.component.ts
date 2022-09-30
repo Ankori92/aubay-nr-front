@@ -20,8 +20,15 @@ export class EmployeesComponent implements OnInit {
   }
 
   public refreshData(forceReload: boolean = false): void {
-    this.reloadEmployees(forceReload);
-    this.reloadCountries(forceReload);
+    if(forceReload) {
+      this.api.delete("cache").subscribe(() => {
+        this.reloadEmployees(true);
+        this.reloadCountries(true);
+      });
+    } else {
+      this.reloadEmployees(false);
+      this.reloadCountries(false);
+    }
   }
 
   private reloadEmployees(forceReload: boolean): void {
