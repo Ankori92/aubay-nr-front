@@ -17,7 +17,12 @@
                 {{ error }}
             </p>
             <div class="button">
-                <button type="submit" mat-button>Se connecter</button>
+                <button type="submit" mat-button [disabled]="!agreed">Se connecter</button>
+            </div>
+            <br />
+            <br />
+            <div class="agreement">
+                <mat-checkbox [checked]="agreed" (change)="agreed = $event.checked" required color="primary"></mat-checkbox> J'accepte les conditions générales d'utilisation
             </div>
         </form>
     </mat-card-content>

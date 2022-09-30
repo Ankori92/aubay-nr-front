@@ -32,3 +32,13 @@ mat-card-title,mat-card-content {
     margin: 20px auto;
     display: block;
 }
+
+.agreement {
+    color: #b2b2b2;
+    opacity: 0.5;
+    user-select: none;
+}
+
+::ng-deep .mat-checkbox-checked.mat-primary .mat-checkbox-background {
+    background-color: #1976d2 !important;
+}

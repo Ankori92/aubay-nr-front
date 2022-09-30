@@ -13,6 +13,8 @@ export class LoginComponent implements OnInit {
 
   error: string | null = null;
 
+  agreed: boolean = true;
+
   form: FormGroup = new FormGroup({
     username: new FormControl(''),
     password: new FormControl(''),
