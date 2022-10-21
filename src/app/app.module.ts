@@ -57,7 +57,7 @@ registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
     NgChartsModule,
     MatIconModule,
     MatSelectModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   declarations: [
     AppComponent,

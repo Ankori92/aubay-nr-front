@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ApiService } from '../core/services/api.service';
 import { Country } from '../models/country';
 import { Employee } from '../models/employee';
+import { Feedback } from '../models/feedback';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-employees',
@@ -13,7 +15,7 @@ export class EmployeesComponent implements OnInit {
   employees: Employee[] = [];
   countries: Country[] = [];
 
-  constructor(private api: ApiService) { }
+  constructor(private api: ApiService, private dialog: MatDialog, ) { }
 
   ngOnInit(): void {
     this.refreshData();
@@ -58,9 +60,7 @@ export class EmployeesComponent implements OnInit {
   }
 
   public nbEmployeesTotal(): number {
-    var count = 0;
-    this.employees.forEach(emp => count += this.nbEmployees(emp));
-    return count;
+    return this.employees.length;
   }
 
   public nbEmployees(employee: Employee): number {
@@ -69,5 +69,39 @@ export class EmployeesComponent implements OnInit {
       count += employee.teamSize; // Employees
     }
     return count;
+  }
+
+    public sendFeedback($event: MouseEvent): void {
+    $event.stopPropagation();
+    this.dialog.open(SendFeedback, { width: '480px', data: {Feedback: "" }})
+    //.afterClosed().subscribe(result => { this.employee = result ? result : savedData;})
+    ;
+    }
+}
+
+@Component({
+  selector: 'dialog-send-feedback',
+   template: ' <h1 mat-dialog-title>Feedback</h1>\
+               <div mat-dialog-content>\
+                 <mat-form-field appearance="fill">\
+                   <mat-label>Feedback</mat-label>\
+                   <input matInput [(ngModel)]="data.feedback">\
+                 </mat-form-field>&nbsp;\
+               </div>\
+               <br />\
+               <div mat-dialog-actions>\
+                 <button mat-raised-button mat-dialog-close color="basic">Annuler</button>&nbsp;\
+                 <button mat-raised-button (click)="save(data.feedback)" color="primary" cdkFocusInitial>Envoyer</button>\
+               </div>'
+})
+export class SendFeedback {
+
+  constructor(public dialogRef: MatDialogRef<SendFeedback>, private api: ApiService, @Inject(MAT_DIALOG_DATA) public data: { feedback: string }) { }
+
+  public save(feedback: string): void {
+    this.api.post("feedbacks", feedback).subscribe(success => this.close(feedback));
+  }
+  public close(feedback: string): void {
+    this.dialogRef.close(feedback);
   }
 }

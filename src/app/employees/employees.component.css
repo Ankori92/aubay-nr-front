@@ -5,3 +5,11 @@ app-employees:host {
 .loading_wrapper {
     text-align: center;
 }
+
+.feedback-button {
+position: fixed;
+width: 100px;
+top: 50%;
+background-color: #1976d2;
+transform: rotate(-90deg) translateX(175%) translateY(-184%);
+}

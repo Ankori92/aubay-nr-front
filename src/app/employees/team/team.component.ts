@@ -66,7 +66,7 @@ export class TeamComponent {
 
 @Component({
   selector: 'dialog-edit-employee',
-  template: ' <h1 mat-dialog-title>Modification</h1>\
+  template: ' IN POPUP<h1 mat-dialog-title>Modification</h1>\
               <div mat-dialog-content *ngIf="data.employee">\
                 <mat-form-field appearance="fill">\
                   <mat-label>Prénom</mat-label>\
