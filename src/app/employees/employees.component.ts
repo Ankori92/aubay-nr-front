@@ -23,39 +23,27 @@ export class EmployeesComponent implements OnInit {
   public refreshData(forceReload: boolean = false): void {
     if(forceReload) {
       this.api.delete("cache").subscribe(() => {
-        this.reloadEmployees(forceReload);
-        this.reloadCountries(forceReload);
+        this.reloadData(forceReload);
       });
     } else {
-      this.reloadEmployees(forceReload);
-      this.reloadCountries(forceReload);
+      this.reloadData(forceReload);
     }
   }
 
-  private reloadEmployees(forceReload: boolean): void {
-    const cachedItemName = "EmployeesComponent.employees";
-    var cachedEmployees = this.cache.getCachedItem(cachedItemName);
-    if(cachedEmployees && !forceReload) {
-      this.employees = JSON.parse(cachedEmployees);
+  private reloadData(forceReload: boolean): void {
+    const cachedItemName = "EmployeesComponent.homeInfos";
+    var cachedHomeInfos = this.cache.getCachedItem(cachedItemName);
+    if(cachedHomeInfos && !forceReload) {
+      var homeInfos = JSON.parse(cachedHomeInfos);
+      this.employees = homeInfos.employees;
+      this.countries = homeInfos.countries;
     } else {
       this.employees = [];
-      this.api.get<Employee[]>("employees/top").subscribe(employees => {
-        this.employees = employees;
-        this.cache.cacheItem(cachedItemName, JSON.stringify(this.employees));
-      });
-    }
-  }
-
-  private reloadCountries(forceReload: boolean): void {
-    const cachedItemName = "EmployeesComponent.countries";
-    var cachedCountries = this.cache.getCachedItem(cachedItemName);
-    if(cachedCountries && !forceReload) {
-      this.countries = JSON.parse(cachedCountries);
-    } else {
       this.countries = [];
-      this.api.get<Country[]>("countries").subscribe(countries => {
-        this.countries = countries;
-        this.cache.cacheItem(cachedItemName, JSON.stringify(this.countries));
+      this.api.get<HomeInfoDTO>("home").subscribe(homeInfos => {
+        this.employees = homeInfos.employees;
+        this.countries = homeInfos.countries;
+        this.cache.cacheItem(cachedItemName, JSON.stringify(homeInfos));
       });
     }
   }
@@ -72,5 +60,15 @@ export class EmployeesComponent implements OnInit {
       count += employee.teamSize; // Employees
     }
     return count;
+  }
+}
+
+export class HomeInfoDTO {
+  countries: Country[];
+  employees: Employee[];
+  
+  constructor(countries: Country[], employees: Employee[]) {
+      this.countries = countries;
+      this.employees = employees;
   }
 }
