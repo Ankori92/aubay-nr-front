@@ -23,7 +23,7 @@ import { AppComponent } from './app.component';
 import { NotificationComponent } from './core/notification/notification.component';
 import { TopBarComponent } from './core/top-bar/top-bar.component';
 import { LoginComponent } from './core/login/login.component';
-import { EmployeesComponent } from './employees/employees.component';
+import { EmployeesComponent, SendFeedback } from './employees/employees.component';
 import { AuthGuard } from './core/login/auth.guard';
 import { TeamComponent, EditEmployee } from './employees/team/team.component';
 import { ResetStatisticsConfirmation, StatsComponent } from './stats/stats.component';
@@ -70,6 +70,7 @@ registerLocaleData(localeFr, 'fr-FR', localeFrExtra);
     StatsChartComponent,
     ResetStatisticsConfirmation,
     EditEmployee,
+    SendFeedback,
     WeightPipe,
     DurationPipe,
     CountPipe

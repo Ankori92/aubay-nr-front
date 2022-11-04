@@ -4,6 +4,8 @@ import { Country } from '../models/country';
 import { Employee } from '../models/employee';
 import { Feedback } from '../models/feedback';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { User } from '../models/user';
+import { AuthenticationService } from '../core/services/authent.service';
 
 @Component({
   selector: 'app-employees',
@@ -73,19 +75,16 @@ export class EmployeesComponent implements OnInit {
 
     public sendFeedback($event: MouseEvent): void {
     $event.stopPropagation();
-    this.dialog.open(SendFeedback, { width: '480px', data: {Feedback: "" }})
-    //.afterClosed().subscribe(result => { this.employee = result ? result : savedData;})
-    ;
+    this.dialog.open(SendFeedback, { width: '480px', data: {feedback: "" }});
     }
 }
 
 @Component({
   selector: 'dialog-send-feedback',
-   template: ' <h1 mat-dialog-title>Feedback</h1>\
+   template: ' <h1 mat-dialog-title>Merci de laisser un commentaire ci-dessous:</h1>\
                <div mat-dialog-content>\
                  <mat-form-field appearance="fill">\
-                   <mat-label>Feedback</mat-label>\
-                   <input matInput [(ngModel)]="data.feedback">\
+                   <textarea matInput [(ngModel)]="data.feedback"></textarea>\
                  </mat-form-field>&nbsp;\
                </div>\
                <br />\
@@ -95,11 +94,15 @@ export class EmployeesComponent implements OnInit {
                </div>'
 })
 export class SendFeedback {
-
-  constructor(public dialogRef: MatDialogRef<SendFeedback>, private api: ApiService, @Inject(MAT_DIALOG_DATA) public data: { feedback: string }) { }
+  user: User | null = null;
+  
+  constructor(public dialogRef: MatDialogRef<SendFeedback>,
+    private api: ApiService,
+    private auth: AuthenticationService,
+    @Inject(MAT_DIALOG_DATA) public data: { feedback: string }) {auth.events().subscribe(user => this.user = user); }
 
   public save(feedback: string): void {
-    this.api.post("feedbacks", feedback).subscribe(success => this.close(feedback));
+    this.api.post("feedbacks", {username: this.user?.username, content: feedback}).subscribe(success => this.close(feedback));
   }
   public close(feedback: string): void {
     this.dialogRef.close(feedback);
