@@ -41,6 +41,30 @@
     position: relative;
 }
 
+.icon_edit {
+    background-size: 45px !important;
+    background: url(/css_sprites.png) -20px -25px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}
+
+.icon_left {
+    background-size: 45px !important;
+    background: url(/css_sprites.png) -0px -25px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}
+
+.icon_bottom {
+    background-size: 45px !important;
+    background: url(/css_sprites.png) -25px 0px;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}
+
 .open {
     background-color: #e9ffea;
 }

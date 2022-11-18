@@ -1,7 +1,7 @@
 
 
 <mat-card>
-    <mat-card-title>Statistiques <img src="assets/refresh.png" class="refresh" (click)="refreshData()" /></mat-card-title>
+    <mat-card-title>Statistiques <div class="refresh" (click)="refreshData()"></div></mat-card-title>
     <mat-card-content class="wrapper">
         <table mat-table [dataSource]="statisticsGlobal" style="width:800px">
             <ng-container matColumnDef="uri">
