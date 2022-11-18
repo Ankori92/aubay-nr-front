@@ -21,10 +21,13 @@ body {
 .refresh {
     cursor: pointer;
     width: 25px;
+    height: 25px;
     position: relative;
     top: 5px;
     right: 25px;
     float: right;
+    background: url('assets/css_sprites.png') -0 -0;
+    background-size: 45px;
 }
 
 router-outlet + *  {
