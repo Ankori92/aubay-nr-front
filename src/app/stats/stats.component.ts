@@ -88,7 +88,7 @@ export class StatsComponent implements OnInit {
 
   public resetStats(): void {
     this.dialog.open(ResetStatisticsConfirmation, { width: '350px', data: { selectedUris: this.selectedUris } }).afterClosed().subscribe(result => {
-      if(result) {
+      if(result === "" || result === true) {
         this.refreshData();
       }
     });
