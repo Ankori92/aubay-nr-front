@@ -1,7 +1,7 @@
 {
-  "name": "aubay-nr",
+  "name": "codefactory-front",
   "version": "1.0.0",
-  "description": "Sensibilisation aux pratiques NR",
+  "description": "Template projet pour codefactory",
   "license": "Aubay",
   "scripts": {
     "ng": "ng",

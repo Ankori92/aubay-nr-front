@@ -8,6 +8,9 @@ node_modules/
 dist/
 .angular
 
+# Notepad++ backups
+*.bak
+
 # Compiled Java class files
 *.class
 
